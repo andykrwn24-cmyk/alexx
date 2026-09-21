@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiya's Sweet Catching Game 🌸🐱</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastelPink: {
+                            light: '#FFF0F5',
+                            DEFAULT: '#FFB6C1',
+                            dark: '#FF69B4',
+                            hot: '#FF1493'
+                        },
+                        pastelPurple: {
+                            light: '#F8F0FF',
+                            DEFAULT: '#E6E6FA',
+                            dark: '#9370DB'
+                        }
+                    },
+                    fontFamily: {
+                        cute: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #FFF0F5 0%, #F8F0FF 50%, #FFE4E1 100%);
+            user-select: none;
+            touch-action: none;
+            overflow: hidden;
+        }
+        /* Custom Game Canvas Styling */
+        #game-canvas {
+            background: linear-gradient(to bottom, #FFF0F5 0%, #FFE4E1 70%, #E6E6FA 100%);
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.25);
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-40px) scale(1.4); opacity: 0; }
+        }
+        .float-score {
+            position: absolute;
+            animation: floatUp 0.8s ease-out forwards;
+            pointer-events: none;
+            font-weight: 900;
+            z-index: 50;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-700 flex flex-col justify-between items-center p-3 sm:p-4">
+
+    <!-- Header / Scoreboard -->
+    <header class="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl p-3.5 shadow-md border border-pink-200 flex justify-between items-center mb-2">
+        <div class="flex items-center space-x-3">
+            <div id="header-avatar" class="w-10 h-10 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center text-xl shadow-inner overflow-hidden border-2 border-pink-300">
+                <i class="fa-solid fa-cat"></i>
+            </div>
+            <div>
+                <h1 class="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">Kiya's Catching Game</h1>
+                <p class="text-xs font-black text-pink-600">Tangkap Jajanan Lucu! 🐾</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <div class="bg-pink-50 border border-pink-200 px-3 py-1 rounded-xl text-center">
+                <span class="block text-[9px] font-extrabold text-gray-400 uppercase">Skor</span>
+                <span id="score-val" class="text-base font-black text-pink-600">0</span>
+            </div>
+            <div class="bg-purple-50 border border-purple-200 px-3 py-1 rounded-xl text-center">
+                <span class="block text-[9px] font-extrabold text-gray-400 uppercase">Waktu</span>
+                <span id="timer-val" class="text-base font-black text-purple-600">30s</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Game Container -->
+    <main class="w-full max-w-md flex-1 relative flex items-center justify-center mb-2">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Start Overlay / Setup Modal -->
+        <div id="start-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-5 text-center z-30">
+            <div class="bg-white/95 w-full max-w-xs rounded-3xl p-5 shadow-2xl border-4 border-pink-300">
+                <div class="w-16 h-16 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl shadow-inner animate-bounce overflow-hidden border-2 border-pink-300" id="preview-upload-icon">
+                    <i class="fa-solid fa-cat"></i>
+                </div>
+                <h2 class="text-lg font-black text-gray-800 mb-1">Hallo Kiya! 🌸</h2>>
+                <button onclick="startGame()" class="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-black py-3 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Mulai Main Sekarang! ✨
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="gameover-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-5 text-center z-30 hidden">
+            <div class="bg-white/95 w-full max-w-xs rounded-3xl p-5 shadow-2xl border-4 border-pink-300">
+                <div class="w-16 h-16 bg-purple-100 text-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl shadow-inner">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-lg font-black text-gray-800 mb-1">Yeay, Selesai! 🎉</h2>
+                <p class="text-xs text-gray-600 mb-1">Skor akhir kamu:</p>
+                <div class="text-3xl font-black text-pink-600 mb-3" id="final-score">0</div>
+                <p id="reward-message" class="text-xs font-bold text-purple-600 bg-purple-50 p-2.5 rounded-xl border border-purple-200 mb-4">
+                    "Aku bangga banget sama Kiya! 💖"
+                </p>
+                <button onclick="startGame()" class="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-black py-3 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Main Lagi 🔄
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Control Helper Buttons for Mobile & Desktop -->
+    <footer class="w-full max-w-md flex justify-between items-center px-1">
+        <button id="btn-left" class="flex-1 bg-white/90 hover:bg-pink-50 text-pink-600 font-black py-3 rounded-2xl shadow-md border border-pink-200 mr-2 flex items-center justify-center gap-2 text-xs transition active:scale-95">
+            <i class="fa-solid fa-arrow-left"></i> Geser Kiri
+        </button>
+        <button id="btn-right" class="flex-1 bg-white/90 hover:bg-pink-50 text-pink-600 font-black py-3 rounded-2xl shadow-md border border-pink-200 ml-2 flex items-center justify-center gap-2 text-xs transition active:scale-95">
+            Geser Kanan <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Responsive Canvas Setup
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Game State Variables
+        let isPlaying = false;
+        let score = 0;
+        let timeLeft = 40;
+        let gameTimer = null;
+        let spawnerTimer = null;
+
+        // Custom User Photo Image Object for Cat Face
+        let customCatImg = null;
+        let hasCustomPhoto = false;
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    customCatImg = img;
+                    hasCustomPhoto = true;
+                    // Update header avatar preview & start overlay icon
+                    document.getElementById('header-avatar').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                    document.getElementById('preview-upload-icon').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Player (Cute Cat Basket)
+        let cat = {
+            x: canvas.width / 2 - 40,
+            y: canvas.height - 75,
+            width: 80,
+            height: 65,
+            speed: 12
+        };
+
+        // Falling Food Items & Obstacles
+        let items = [];
+
+        // Input Controls (Keyboard & Touch/Mouse)
+        let keys = { ArrowLeft: false, ArrowRight: false };
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') keys.ArrowLeft = true;
+            if (e.key === 'ArrowRight' || e.key === 'd') keys.ArrowRight = true;
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') keys.ArrowLeft = false;
+            if (e.key === 'ArrowRight' || e.key === 'd') keys.ArrowRight = false;
+        });
+
+        // Touch buttons
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+
+        btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); keys.ArrowLeft = true; });
+        btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); keys.ArrowLeft = false; });
+        btnLeft.addEventListener('mousedown', () => { keys.ArrowLeft = true; });
+        btnLeft.addEventListener('mouseup', () => { keys.ArrowLeft = false; });
+
+        btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); keys.ArrowRight = true; });
+        btnRight.addEventListener('touchend', (e) => { e.preventDefault(); keys.ArrowRight = false; });
+        btnRight.addEventListener('mousedown', () => { keys.ArrowRight = true; });
+        btnRight.addEventListener('mouseup', () => { keys.ArrowRight = false; });
+
+        // Mouse/Touch drag on canvas
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isPlaying) return;
+            const rect = canvas.getBoundingClientRect();
+            cat.x = e.clientX - rect.left - cat.width / 2;
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isPlaying) return;
+            const rect = canvas.getBoundingClientRect();
+            cat.x = e.touches[0].clientX - rect.left - cat.width / 2;
+        }, {passive: true});
+
+        // Start Game Function
+        function startGame() {
+            document.getElementById('start-overlay').classList.add('hidden');
+            document.getElementById('gameover-overlay').classList.add('hidden');
+            score = 0;
+            timeLeft = 30;
+            items = [];
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('timer-val').innerText = timeLeft + 's';
+            cat.x = canvas.width / 2 - cat.width / 2;
+            isPlaying = true;
+
+            // Clear old intervals
+            clearInterval(gameTimer);
+            clearInterval(spawnerTimer);
+
+            // Countdown timer
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer-val').innerText = timeLeft + 's';
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // Item spawner
+            spawnerTimer = setInterval(() => {
+                if (!isPlaying) return;
+                spawnItem();
+            }, 550);
+        }
+
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FFB6C1', '#FF69B4', '#E6E6FA', '#FF1493', '#FFF0F5']
+            });
+        }
+
+        function endGame() {
+            isPlaying = false;
+            clearInterval(gameTimer);
+            clearInterval(spawnerTimer);
+            document.getElementById('final-score').innerText = score;
+            
+            const rewardEl = document.getElementById('reward-message');
+            if (score >= 35) {
+                rewardEl.innerText = "🌟 Kucing kamu pasti kenyang banget🥰";
+                triggerConfetti();
+            } else if (score >= 18) {
+                rewardEl.innerText = "✨ kenyang dikit gas main lagi biar kenyang banget 💖";
+                triggerConfetti();
+            } else {
+                rewardEl.innerText = "💪 Gas lagi yuk biar makin banyak dapat boba & donat! 🐱";
+            }
+            
+            document.getElementById('gameover-overlay').classList.remove('hidden');
+        }
+
+        // Spawn food items and funny obstacles
+        function spawnItem() {
+            const foodTypes = [
+                { emoji: '🥛', points: 2, name: 'Ikan' },
+                { emoji: '🍕', points: 1, name: 'Susu' },
+                { emoji: '🍰', points: 1, name: 'Benang' },
+                { emoji: '🍓', points: 3, name: 'Stroberi' },
+                { emoji: '🍩', points: 1, name: 'Donat' },
+                { emoji: '🧋', points: 2, name: 'Boba' },
+                { emoji: '☠️', points: -2, name: 'Timun' } // Funny obstacle for cats
+            ];
+            
+            const selected = foodTypes[Math.floor(Math.random() * foodTypes.length)];
+            const size = 35;
+            const x = Math.random() * (canvas.width - size - 20) + 10;
+            const speed = Math.random() * 2 + 2.2 + (score * 0.025);
+            
+            items.push({ x: x, y: -40, size: size, speed: speed, ...selected });
+        }
+
+        // Floating score text effect
+        function showFloatingText(text, x, y, color) {
+            const el = document.createElement('div');
+            el.className = 'float-score';
+            el.innerText = text;
+            el.style.left = x + 'px';
+            el.style.top = y + 'px';
+            el.style.color = color;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
+        // Main Update & Render Loop
+        function update() {
+            if (!isPlaying) return;
+
+            // Move Cat
+            if (keys.ArrowLeft) cat.x -= cat.speed;
+            if (keys.ArrowRight) cat.x += cat.speed;
+
+            // Boundaries check
+            if (cat.x < 10) cat.x = 10;
+            if (cat.x > canvas.width - cat.width - 10) cat.x = canvas.width - cat.width - 10;
+
+            // Update Items
+            for (let i = items.length - 1; i >= 0; i--) {
+                items[i].y += items[i].speed;
+
+                // Collision detection with cat basket
+                if (
+                    items[i].x < cat.x + cat.width &&
+                    items[i].x + items[i].size > cat.x &&
+                    items[i].y < cat.y + cat.height &&
+                    items[i].y + items[i].size > cat.y
+                ) {
+                    const rect = canvas.getBoundingClientRect();
+                    const clientX = rect.left + items[i].x;
+                    const clientY = rect.top + items[i].y;
+
+                    score += items[i].points;
+                    if (score < 0) score = 0;
+
+                    if (items[i].points < 0) {
+                        showFloatingText(`${items[i].points} 🥒`, clientX, clientY, '#10B981');
+                    } else if (items[i].points >= 3) {
+                        showFloatingText(`+${items[i].points} ${items[i].emoji}`, clientX, clientY, '#FF1493');
+                    } else {
+                        showFloatingText(`+${items[i].points} ${items[i].emoji}`, clientX, clientY, '#FF69B4');
+                    }
+
+                    document.getElementById('score-val').innerText = score;
+                    items.splice(i, 1);
+                    continue;
+                }
+
+                // Remove if out of bounds
+                if (items[i].y > canvas.height) {
+                    items.splice(i, 1);
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Cute Cat Basket with Custom Photo or Default Cat Face
+            ctx.save();
+            ctx.fillStyle = '#FFB6C1';
+            ctx.beginPath();
+            ctx.roundRect(cat.x, cat.y, cat.width, cat.height, 16);
+            ctx.fill();
+            ctx.strokeStyle = '#FF69B4';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Cat ears
+            ctx.fillStyle = '#FFB6C1';
+            ctx.beginPath();
+            ctx.moveTo(cat.x + 8, cat.y + 4);
+            ctx.lineTo(cat.x + 20, cat.y - 14);
+            ctx.lineTo(cat.x + 32, cat.y + 4);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(cat.x + cat.width - 32, cat.y + 4);
+            ctx.lineTo(cat.x + cat.width - 20, cat.y - 14);
+            ctx.lineTo(cat.x + cat.width - 8, cat.y + 4);
+            ctx.fill();
+            ctx.stroke();
+
+            // Render Face (Custom Photo or Cute Cat Illustration)
+            if (hasCustomPhoto && customCatImg) {
+                ctx.save();
+                ctx.beginPath();
+                const avatarRadius = 22;
+                const avatarX = cat.x + cat.width / 2;
+                const avatarY = cat.y + 32;
+                ctx.arc(avatarX, avatarY, avatarRadius, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(customCatImg, avatarX - avatarRadius, avatarY - avatarRadius, avatarRadius * 2, avatarRadius * 2);
+                ctx.restore();
+
+                // Ring border for avatar
+                ctx.beginPath();
+                ctx.arc(cat.x + cat.width / 2, cat.y + 32, 22, 0, Math.PI * 2);
+                ctx.strokeStyle = '#FF1493';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+            } else {
+                // Default Cute Cat Face
+                ctx.fillStyle = '#4A5568';
+                ctx.beginPath();
+                ctx.arc(cat.x + 24, cat.y + 28, 4, 0, Math.PI * 2);
+                ctx.arc(cat.x + cat.width - 24, cat.y + 28, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cute nose & mouth
+                ctx.fillStyle = '#FF1493';
+                ctx.beginPath();
+                ctx.arc(cat.x + cat.width / 2, cat.y + 36, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+
+            // Draw Falling Food Items
+            items.forEach(item => {
+                ctx.save();
+                ctx.font = '26px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(item.emoji, item.x + item.size / 2, item.y + item.size / 2);
+                ctx.restore();
+            });
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        // Initialize frame loop
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>
