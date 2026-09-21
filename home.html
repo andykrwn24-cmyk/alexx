@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiya's Love Garden 💖 - Spesial Untukmu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastelPink: {
+                            light: '#FFF0F5',
+                            DEFAULT: '#FFB6C1',
+                            dark: '#FF69B4',
+                            hot: '#FF1493'
+                        },
+                        pastelPurple: {
+                            light: '#F8F0FF',
+                            DEFAULT: '#E6E6FA',
+                            dark: '#9370DB'
+                        }
+                    },
+                    fontFamily: {
+                        cute: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Nunito & Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #FFF0F5 0%, #F8F0FF 50%, #FFE4E1 100%);
+            overflow-x: hidden;
+        }
+        /* Floating Hearts Animation */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+        .floating-heart {
+            position: fixed;
+            color: #FF69B4;
+            user-select: none;
+            pointer-events: none;
+            animation: floatUp 5s linear infinite;
+            z-index: 10;
+        }
+        /* Bounce Animation */
+        @keyframes bounceSlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-slow {
+            animation: bounceSlow 3s ease-in-out infinite;
+        }
+        /* Pulsing Glow */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 105, 180, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(255, 20, 147, 0.8); }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-700 flex flex-col justify-between relative">
+
+    <!-- Floating Hearts Container -->
+    <div id="hearts-container"></div>
+
+    <!-- Header / Navbar -->
+    <header class="w-full py-4 px-6 bg-white/70 backdrop-blur-md shadow-sm sticky top-0 z-40 flex justify-between items-center border-b border-pink-100">
+        <div class="flex items-center space-x-2">
+            <span class="text-2xl animate-bounce">💖</span>
+            <span class="font-black text-xl text-pink-600 tracking-wider">I Love Kiya</span>
+        </div>
+        <div class="flex items-center gap-3 bg-pink-100/80 p-2 rounded-full shadow-sm border border-pink-200">
+    <!-- Ganti "lagu.mp3" dengan nama file musik Anda yang ada di folder (contoh: "cinta.mp3") -->
+    <audio id="bgm" src="smp.mp3" controls class="h-8 w-48 accent-pink-500 scale-90 origin-left"></audio>
+    
+    <!-- Tombol Musik -->
+    <button onclick="playBGM()" id="bgm" class="bg-pink-500 hover:bg-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow transition flex items-center gap-1.5 cursor-pointer">
+        <i class="fa-solid fa-music"></i> 
+        <span id="music-text">Putar Musik</span>
+    </button>
+</div>
+            </button>
+            
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-4xl mx-auto px-4 py-8 flex flex-col items-center z-20 flex-1 w-full">
+        
+        <!-- Hero Section with "Hallo kiya cantik" Button -->
+        <div class="text-center my-6 md:my-10">
+            <div class="inline-block bg-pink-100 text-pink-600 px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest mb-4 shadow-sm">
+                ✨ Spesial Untuk kiya paling gemas ✨
+            </div>
+            <h1 class="text-`-3xl md:text-5xl font-black text-gray-800 mb-4 leading-tight">
+                Selamat Datang Di Dunia <span class="text-pink-600 underline decoration-wavy">Kiya</span>! 💕
+            </h1>
+            <p class="text-sm md:text-base text-gray-600 max-w-lg mx-auto mb-8">
+                Ini dibuat untuk nunjukin seluruh rasa sayang aku dan cinta aku 
+                disini juga ada kuis lucu buat kamu yang bikin hari-hariku selalu berwarna!
+            </p>
+
+            <!-- THE SPECIAL "HALLO KIYA" BUTTON -->
+            <div class="relative inline-block">
+                <div class="absolute -inset-1 bg-gradient-to-r from-pink-400 to-purple-400 rounded-3xl blur opacity-75 animate-pulse"></div>
+                <button onclick="showKiyaPopup()" class="relative bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-black text-lg md:text-xl px-8 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-3">
+                    <i class="fa-solid fa-hand-holding-heart text-2xl animate-bounce"></i> Hallo Kiya 💌
+                </button>
+            </div>
+        </div>
+
+        <!-- Interactive Love Quiz Section -->
+        <section class="w-full bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border border-pink-200 my-8">
+            <div class="text-center mb-6">
+                <span class="text-xs bg-purple-100 text-purple-600 font-bold px-3 py-1 rounded-full uppercase">Mini Game Kuis Cinta</span>
+                <h2 class="text-xl md:text-2xl font-black text-gray-800 mt-2"> Teka Teki Kiya Imup 🤭</h2>
+            </div>
+
+            <div id="quiz-box" class="max-w-md mx-auto">
+                <div id="question-text" class="text-base font-bold text-gray-700 mb-4 text-center">
+                    1. Siapa orang paling lucu, cantik, pintar, baik, dan sabar di dunia ini?
+                </div>
+                <div id="quiz-options" class="space-y-3">
+                    <button onclick="answerQuiz(true)" class="w-full bg-pink-50 hover:bg-pink-500 hover:text-white border-2 border-pink-200 font-bold text-sm py-3 px-4 rounded-xl transition text-left flex items-center justify-between group">
+                        <span>A. Kiya imup dan rajin ini</span>
+                        <i class="fa-solid fa-heart text-pink-400 group-hover:text-white"></i>
+                    </button>
+                    <button onclick="answerQuiz(false)" class="w-full bg-pink-50 hover:bg-pink-500 hover:text-white border-2 border-pink-200 font-bold text-sm py-3 px-4 rounded-xl transition text-left flex items-center justify-between group">
+                        <span>B. Artis Korea</span>
+                        <i class="fa-solid fa-face-angry text-pink-400 group-hover:text-white"></i>
+                    </button>
+                    <button onclick="answerQuiz(false)" class="w-full bg-pink-50 hover:bg-pink-500 hover:text-white border-2 border-pink-200 font-bold text-sm py-3 px-4 rounded-xl transition text-left flex items-center justify-between group">
+                        <span>C. pokok jawabannya a</span>
+                        <i class="fa-solid fa-face-laugh text-pink-400 group-hover:text-white"></i>
+                    </button>
+
+                    <div id="quiz-box" class="max-w-md mx-auto">
+                <div id="question-text" class="text-base font-bold text-gray-700 mb-4 text-center">
+                    2. Apa yang bikin kiya pusing
+                </div>
+                <div id="quiz-options" class="space-y-3">
+                    <button onclick="answerQuiz(false)" class="w-full bg-pink-50 hover:bg-pink-500 hover:text-white border-2 border-pink-200 font-bold text-sm py-3 px-4 rounded-xl transition text-left flex items-center justify-between group">
+                        <span>A. Mtk</span>
+                        <i class="fa-solid fa-heart text-pink-400 group-hover:text-white"></i>
+                    </button>
+                    <button onclick="answerQuiz(false)" class="w-full bg-pink-50 hover:bg-pink-500 hover:text-white border-2 border-pink-200 font-bold text-sm py-3 px-4 rounded-xl transition text-left flex items-center justify-between group">
+                        <span>B. Kimia</span>
+                        <i class="fa-solid fa-face-angry text-pink-400 group-hover:text-white"></i>
+                    </button>
+                    <button onclick="answerQuiz(true)" class="w-full bg-pink-50 hover:bg-pink-500 hover:text-white border-2 border-pink-200 font-bold text-sm py-3 px-4 rounded-xl transition text-left flex items-center justify-between group">
+                        <span>C. Fisika</span>
+                        <i class="fa-solid fa-face-laugh text-pink-400 group-hover:text-white"></i>
+                    </button>
+                </div>
+                <div id="quiz-result" class="mt-4 text-center font-bold text-sm hidden text-pink-600 bg-pink-50 p-3 rounded-xl border border-pink-200"></div>
+            </div>
+        </section>
+
+        <!-- Cute Memory Gallery Section -->
+        <section class="w-full my-8">
+            <div class="text-center mb-6">
+                <span class="text-xs bg-pink-100 text-pink-600 font-bold px-3 py-1 rounded-full uppercase">Galeri Momen Imut</span>
+                <h2 class="text-xl md:text-2xl font-black text-gray-800 mt-2"> Pap kiya imup 📸</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- Memory Card 1 -->
+                <div class="bg-white p-3 rounded-2xl shadow-md border border-pink-100 transform hover:-translate-y-1 transition group">
+                    <div class="aspect-square bg-pink-100 rounded-xl overflow-hidden mb-3 relative">
+                        <img src="1.png.jpeg" alt="kiya imup" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    </div>
+                    <h3 class="font-bold text-sm text-gray-800 text-center">First Pap</h3>
+                    <p class="text-xs text-gray-500 text-center mt-1">Hari di mana aku dapet pap kamu, ketemu wanita selucu Kiya.</p>
+                </div>
+                <!-- Memory Card 2 -->
+                <div class="bg-white p-3 rounded-2xl shadow-md border border-pink-100 transform hover:-translate-y-1 transition group">
+                    <div class="aspect-square bg-pink-100 rounded-xl overflow-hidden mb-3 relative">
+                        <img src="2.png.jpeg" alt="Kuliner" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    </div>
+                    <h3 class="font-bold text-sm text-gray-800 text-center">Pap Try Out</h3>
+                    <p class="text-xs text-gray-500 text-center mt-1">Kamu cantik banget pas ini semoga kamu bisa banyak belajar dari Try Out ini.</p>
+                </div>
+                <!-- Memory Card 3 -->
+                <div class="bg-white p-3 rounded-2xl shadow-md border border-pink-100 transform hover:-translate-y-1 transition group">
+                    <div class="aspect-square bg-pink-100 rounded-xl overflow-hidden mb-3 relative">
+                        <img src="3.png.jpeg" alt="Sunset" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    </div>
+                    <h3 class="font-bold text-sm text-gray-800 text-center">Pap Hari Ini</h3>
+                    <p class="text-xs text-gray-500 text-center mt-1">Kiya selalu gemes selalu cantikk aaaa pokok lucu</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-6 text-center text-xs text-gray-500 bg-white/50 backdrop-blur-sm border-t border-pink-100">
+        <p>Dibuat sepenuh hati khusus untuk <span class="font-bold text-pink-600">Kiya</span> tercinta ✨ &copy; 2026</p>
+    </footer>
+
+    <!-- POP-UP MODAL FOR "HALLO KIYA" -->
+    <div id="kiya-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-pink-300 text-center transform scale-95 transition-all duration-300 relative animate-bounce-slow">
+            <div class="w-16 h-16 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+                <i class="fa-solid fa-cat animate-bounce"></i>
+            </div>
+            <h3 class="text-xl md:text-2xl font-black text-gray-800 mb-2">Halo Juga, Kiya Cantik! 🌸</h3>
+            <p id="gombalan-text" class="text-sm md:text-base text-gray-600 mb-6 font-semibold italic bg-pink-50 p-4 rounded-2xl border border-pink-200">
+                "Kiya itu mirip kaya Wi-Fi ya... Soalnya pas kamu dekat, langsung nyambung ke hati aku! Eaaa~ 🤭"
+            </p>
+            <div class="flex space-x-3">
+                <button onclick="nextGombalan()" class="flex-1 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-md">
+                    Lain Dong! 😆
+                </button>
+                <button onclick="closeKiyaPopup()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm transition">
+                    Tutup 💖
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO SYNTHESIZER / BGM SIMULATOR -->
+    <script>
+        // Floating hearts generator
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = ['💖', '✨', '🌸', '💘', '💕'][Math.floor(Math.random() * 5)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.getElementById('hearts-container').appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+        setInterval(createHeart, 600);
+
+        // Gombalan List
+        const gombalanList = [
+            "\"Kiya itu mirip kaya Wi-Fi ya... Soalnya pas kamu dekat, langsung nyambung ke hati aku! Eaaa~ 🤭\"",
+            "\"Kamu tau gak bedanya Kiya sama Kamus? Kalau kamus artinya banyak, kalau Kiya artinya 'Kiya-mat' yang menggetarkan hatiku! 🥰\"",
+            "\"Kiya, rumah kamu di pinggir tebing ya? Soalnya aku jatuh terus ke dalam hati kamu... Hayo ngaku! 😆\"",
+            "\"Kalau jadi superhero, Kiya pasti jadi Wonder Woman. Kalau aku jadi apa? Jadi 'Won-der-ful' karena punya pacar kayak kamu! ✨\"",
+            "\"Matahari boleh aja terbenam, tapi senyum Kiya di hati aku terbitnya selamanya lho! ☀️💖\""
+        ];
+        let currentGombalIndex = 0;
+
+        function showKiyaPopup() {
+            const modal = document.getElementById('kiya-modal');
+            modal.classList.remove('hidden');
+            currentGombalIndex = 0;
+            document.getElementById('gombalan-text').innerText = gombalanList[currentGombalIndex];
+        }
+
+        function closeKiyaPopup() {
+            document.getElementById('kiya-modal').classList.add('hidden');
+        }
+
+        function nextGombalan() {
+            currentGombalIndex = (currentGombalIndex + 1) % gombalanList.length;
+            const el = document.getElementById('gombalan-text');
+            el.style.opacity = 0;
+            setTimeout(() => {
+                el.innerText = gombalanList[currentGombalIndex];
+                el.style.opacity = 1;
+            }, 150);
+        }
+
+        // Quiz Logic
+        function answerQuiz(isCorrect) {
+            const resultBox = document.getElementById('quiz-result');
+            resultBox.classList.remove('hidden');
+            if(isCorrect) {
+                resultBox.innerHTML = "🎉 Yeay Benar! Kamu emang paling tau kiya 💖✨";
+                resultBox.className = "mt-4 text-center font-bold text-sm text-pink-600 bg-pink-50 p-3 rounded-xl border border-pink-200 animate-bounce";
+            } else {
+                resultBox.innerHTML = "❌ Wah salah! pilih yang lainn dong😜";
+                resultBox.className = "mt-4 text-center font-bold text-sm text-red-500 bg-red-50 p-3 rounded-xl border border-red-200";
+            }
+        }
+
+        // Fake BGM player with Web Audio API for cute relaxing chords
+        let isPlayingMusic = false;
+        let audioCtx = null;
+        let timerInterval = null;
+
+        function playBGM() {
+            const btnText = document.getElementById('music-text');
+            if (!isPlayingMusic) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    isPlayingMusic = true;
+                    btnText.innerText = "Matikan Musik 🎶";
+                    
+                    // Simple cute arpeggio player
+                    const notes = [523.25, 587.33, 659.25, 698.46, 783.99]; // C5, D5, E5, F5, G5
+                    let i = 0;
+                    timerInterval = setInterval(() => {
+                        if(!audioCtx) return;
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(notes[i % notes.length], audioCtx.currentTime);
+                        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.5);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 1.5);
+                        i++;
+                    }, 600);
+                } catch(e) {
+                    console.error(e);
+                }
+            } else {
+                if(audioCtx) {
+                    audioCtx.close();
+                    audioCtx = null;
+                }
+                clearInterval(timerInterval);
+                isPlayingMusic = false;
+                btnText.innerText = "Putar Musik Cinta";
+            }
+
+            
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiya's Love Garden</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="home.html"></script>
+</head>
+<body class="min-h-screen text-gray-700 flex flex-col justify-between relative bg-pink-50">
+
+    <!-- Header / Konten Utama Home Anda -->
+    <header class="p-6 text-center">
+        <h1 class="text-3xl font-bold text-pink-600">Kalo kamu gabut kamu bisa mainin ini💕</h1>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-4 text-center">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-pink-200">
+            <h2 class="text-xl font-semibold text-pink-500 mb-4">Halo Kiya! ✨</h2>
+            <p class="text-gray-600 mb-6">Klik tombol di bawah ini kalau mau main game</p>
+            
+            <!-- Tombol Navigasi Alternatif di dalam Kartu -->
+            <a href="game.html" class="inline-block bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 rounded-full shadow-md transition duration-300">
+                🎮 Masuk ke Game Kiya
+            </a>
+        </div>
+    </main>
+
+    <footer class="p-4 text-center text-xs text-pink-400">
+        Made with ❤️ for Kiya
+    </footer>
+
+    <!-- TOMBOL MENUJU GAME (FLOATING DI POJOK KANAN BAWAH) -->
+    <div class="fixed bottom-6 right-6 z-50 animate-bounce">
+        <a href="game.html" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-5 rounded-full shadow-2xl transition duration-300 flex items-center gap-2 border-2 border-white">
+            <span class="text-xl">🐱🎮</span>
+            <span>Main Game</span>
+        </a>
+    </div>
+
+    <script>
+        function playBGM() {
+            // Kode fungsi musik Anda yang sudah ada sebelumnya
+        }
+    </script>
+</body>
+</html>
